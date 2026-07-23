@@ -1,4 +1,5 @@
 -- replace all references to "tasty_bytes_dbt_db" with "dbt_projects"
+-- replace all references to "tasty_bytes_dbt_wh" with "dbt_projects_wh"
 
 -- =============================================================================
 -- Tasty Bytes dbt Demo: Environment Setup & Source Data
@@ -30,7 +31,7 @@ USE ROLE ACCOUNTADMIN;
 -- Alternatively, you can use an existing warehouse in your account.
 -- =============================================================================
 
--- CREATE WAREHOUSE tasty_bytes_dbt_wh WAREHOUSE_SIZE = XLARGE;
+CREATE WAREHOUSE dbt_projects_wh WAREHOUSE_SIZE = XLARGE;
 
 -- =============================================================================
 -- STEP 2: Create a database and schemas for integrations and model materializations
@@ -39,13 +40,13 @@ USE ROLE ACCOUNTADMIN;
 -- The RAW schema holds the Tasty Bytes foundational source data.
 -- =============================================================================
 
--- CREATE DATABASE IF NOT EXISTS dbt_projects;
--- CREATE SCHEMA IF NOT EXISTS dbt_projects.dev;
--- CREATE SCHEMA IF NOT EXISTS dbt_projects.prod;
--- -- Used for storing objects Snowflake needs for GitHub integration (secrets, etc.)
--- CREATE SCHEMA IF NOT EXISTS dbt_projects.integrations;
--- -- Used for the Tasty Bytes foundational source data loaded from S3
--- CREATE SCHEMA IF NOT EXISTS dbt_projects.raw;
+CREATE DATABASE IF NOT EXISTS dbt_projects;
+CREATE SCHEMA IF NOT EXISTS dbt_projects.dev;
+CREATE SCHEMA IF NOT EXISTS dbt_projects.prod;
+-- Used for storing objects Snowflake needs for GitHub integration (secrets, etc.)
+CREATE SCHEMA IF NOT EXISTS dbt_projects.integrations;
+-- Used for the Tasty Bytes foundational source data loaded from S3
+CREATE SCHEMA IF NOT EXISTS dbt_projects.raw;
 
 -- =============================================================================
 -- STEP 3: Enable logging, tracing, and metrics
@@ -55,13 +56,13 @@ USE ROLE ACCOUNTADMIN;
 -- See: https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability
 -- =============================================================================
 
--- ALTER SCHEMA dbt_projects.dev SET LOG_LEVEL = 'INFO';
--- ALTER SCHEMA dbt_projects.dev SET TRACE_LEVEL = 'ALWAYS';
--- ALTER SCHEMA dbt_projects.dev SET METRIC_LEVEL = 'ALL';
+ALTER SCHEMA dbt_projects.dev SET LOG_LEVEL = 'INFO';
+ALTER SCHEMA dbt_projects.dev SET TRACE_LEVEL = 'ALWAYS';
+ALTER SCHEMA dbt_projects.dev SET METRIC_LEVEL = 'ALL';
 
--- ALTER SCHEMA dbt_projects.prod SET LOG_LEVEL = 'INFO';
--- ALTER SCHEMA dbt_projects.prod SET TRACE_LEVEL = 'ALWAYS';
--- ALTER SCHEMA dbt_projects.prod SET METRIC_LEVEL = 'ALL';
+ALTER SCHEMA dbt_projects.prod SET LOG_LEVEL = 'INFO';
+ALTER SCHEMA dbt_projects.prod SET TRACE_LEVEL = 'ALWAYS';
+ALTER SCHEMA dbt_projects.prod SET METRIC_LEVEL = 'ALL';
 
 -- =============================================================================
 -- STEP 4: Create a GitHub secret and API integration
@@ -77,22 +78,22 @@ USE ROLE ACCOUNTADMIN;
 -- See: https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git
 -- =============================================================================
 
--- USE dbt_projects.integrations;
--- CREATE OR REPLACE SECRET dbt_projects.integrations.tb_dbt_git_secret
---   TYPE = password
---   USERNAME = 'bwk-philip-king'
-  -- PASSWORD = 'YOUR_PERSONAL_ACCESS_TOKEN';
+USE dbt_projects.integrations;
+CREATE OR REPLACE SECRET dbt_projects.integrations.tb_dbt_git_secret
+  TYPE = password
+  USERNAME = 'bwk-philip-king'
+  PASSWORD = 'YOUR_PERSONAL_ACCESS_TOKEN';
   
--- -- Replace 'https://github.com/my-github-account' with the URL of the GitHub
--- -- account for your forked repository.
--- -- This API integration is used when creating a workspace in Snowsight (Projects > Workspaces)
--- -- to connect Snowflake to your forked GitHub repository.
--- CREATE OR REPLACE API INTEGRATION tb_dbt_git_api_integration
---   API_PROVIDER = git_https_api
---   API_ALLOWED_PREFIXES = ('https://github.com/bwk-philip-king')
---   -- Comment out the following line if your forked repository is public
---   ALLOWED_AUTHENTICATION_SECRETS = (dbt_projects.integrations.tb_dbt_git_secret)
---   ENABLED = TRUE;
+-- Replace 'https://github.com/my-github-account' with the URL of the GitHub
+-- account for your forked repository.
+-- This API integration is used when creating a workspace in Snowsight (Projects > Workspaces)
+-- to connect Snowflake to your forked GitHub repository.
+CREATE OR REPLACE API INTEGRATION tb_dbt_git_api_integration
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/bwk-philip-king')
+  -- Comment out the following line if your forked repository is public
+  ALLOWED_AUTHENTICATION_SECRETS = (dbt_projects.integrations.tb_dbt_git_secret)
+  ENABLED = TRUE;
 
 -- =============================================================================
 -- STEP 5: (Optional) Create a network rule and external access integration
@@ -104,19 +105,19 @@ USE ROLE ACCOUNTADMIN;
 -- =============================================================================
 
 -- Create NETWORK RULE for external access integration
--- CREATE OR REPLACE NETWORK RULE dbt_network_rule
---   MODE = EGRESS
---   TYPE = HOST_PORT
---   -- Minimal URL allowlist that is required for dbt deps
---   VALUE_LIST = (
---     'hub.getdbt.com',
---     'codeload.github.com'
---     );
+CREATE OR REPLACE NETWORK RULE dbt_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  -- Minimal URL allowlist that is required for dbt deps
+  VALUE_LIST = (
+    'hub.getdbt.com',
+    'codeload.github.com'
+    );
 
 -- Create EXTERNAL ACCESS INTEGRATION for dbt access to external dbt package locations
--- CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dbt_ext_access
---   ALLOWED_NETWORK_RULES = (dbt_network_rule)
---   ENABLED = TRUE;
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dbt_ext_access
+  ALLOWED_NETWORK_RULES = (dbt_network_rule)
+  ENABLED = TRUE;
 
 -- =============================================================================
 -- STEP 6: Set up source data - Tasty Bytes foundational data model

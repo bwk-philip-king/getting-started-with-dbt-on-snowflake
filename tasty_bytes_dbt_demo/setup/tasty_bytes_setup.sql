@@ -1,4 +1,4 @@
--- replace all references to "dbt_projects" with "dbt_projects"
+-- replace all references to "tasty_bytes_dbt_db" with "dbt_projects"
 
 -- =============================================================================
 -- Tasty Bytes dbt Demo: Environment Setup & Source Data

@@ -75,7 +75,7 @@ ALTER SCHEMA tasty_bytes_dbt_db.prod SET METRIC_LEVEL = 'ALL';
 -- See: https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git
 -- =============================================================================
 
-USE tasty_bytes_dbt_db.integrations;
+USE tasty_bytes_dbt_db.integrations; 
 CREATE OR REPLACE SECRET tasty_bytes_dbt_db.integrations.tb_dbt_git_secret
   TYPE = password
   USERNAME = 'your-gh-username'

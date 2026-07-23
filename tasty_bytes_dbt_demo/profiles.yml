@@ -1,3 +1,6 @@
+# replace all references to "tasty_bytes_dbt_db" with "dbt_projects"
+# replace all references to "tasty_bytes_dbt_wh" with "dbt_projects_wh"
+
 tasty_bytes:
   target: dev
   outputs:
@@ -6,16 +9,16 @@ tasty_bytes:
       account: 'not needed'
       user: 'not needed'
       role: accountadmin
-      database: tasty_bytes_dbt_db
+      database: dbt_projects
       schema: dev
-      warehouse: tasty_bytes_dbt_wh
+      warehouse: dbt_projects_wh
       threads: 8
     prod:
       type: snowflake
       account: 'not needed'
       user: 'not needed'
       role: accountadmin
-      database: tasty_bytes_dbt_db
+      database: dbt_projects
       schema: prod
-      warehouse: tasty_bytes_dbt_wh
+      warehouse: dbt_projects_wh
       threads: 8

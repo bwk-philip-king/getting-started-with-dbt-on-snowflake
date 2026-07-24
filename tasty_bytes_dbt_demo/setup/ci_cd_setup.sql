@@ -1,3 +1,6 @@
+-- replace all references to "dbt_projects" with "dbt_projects"
+-- replace all references to "tasty_bytes_dbt_wh" with "dbt_projects_wh"
+
 -- =============================================================================
 -- CI/CD Setup for dbt Projects on Snowflake
 -- Source: https://docs.snowflake.com/en/user-guide/tutorials/dbt-projects-on-snowflake-ci-cd-tutorial
@@ -15,23 +18,23 @@
 
 -- Option 1: Create an empty database with dev and prod schemas
 -- This is the simplest approach when you're starting from scratch.
-CREATE DATABASE IF NOT EXISTS tasty_bytes_dbt_db;
-CREATE SCHEMA IF NOT EXISTS tasty_bytes_dbt_db.dev;
-CREATE SCHEMA IF NOT EXISTS tasty_bytes_dbt_db.prod;
+CREATE DATABASE IF NOT EXISTS dbt_projects;
+CREATE SCHEMA IF NOT EXISTS dbt_projects.dev;
+CREATE SCHEMA IF NOT EXISTS dbt_projects.prod;
 
 -- Option 2: Clone your production database
 -- Use Snowflake's zero-copy cloning to create a full replica of your production database.
 -- This gives you a high-fidelity testing environment and is cost-effective because you
 -- only pay storage for tables that change during dbt runs.
--- CREATE DATABASE IF NOT EXISTS tasty_bytes_dbt_db CLONE other_tasty_bytes_dbt_db;
+-- CREATE DATABASE IF NOT EXISTS dbt_projects CLONE other_dbt_projects;
 
 -- Option 3: Create an empty dev database and clone the production schemas you need
 -- Use this method when you only need specific schemas for testing.
--- CREATE DATABASE IF NOT EXISTS tasty_bytes_dbt_db;
+-- CREATE DATABASE IF NOT EXISTS dbt_projects;
 
 -- Repeat the line below for other necessary schemas
--- CREATE SCHEMA IF NOT EXISTS tasty_bytes_dbt_db.dev CLONE other_tasty_bytes_dbt_db.dev;
--- CREATE SCHEMA IF NOT EXISTS tasty_bytes_dbt_db.prod CLONE other_tasty_bytes_dbt_db.prod;
+-- CREATE SCHEMA IF NOT EXISTS dbt_projects.dev CLONE other_dbt_projects.dev;
+-- CREATE SCHEMA IF NOT EXISTS dbt_projects.prod CLONE other_dbt_projects.prod;
 
 -- =============================================================================
 -- STEP 2: Create a GitHub service user in Snowflake (recommended)
@@ -44,7 +47,7 @@ CREATE USER IF NOT EXISTS github_actions_service_user
   WORKLOAD_IDENTITY = (
     TYPE = OIDC
     ISSUER = 'https://token.actions.githubusercontent.com',
-    SUBJECT = 'repo:your_repo_org/your_dbt_repo:environment:prod'
+    SUBJECT = 'repo:bwk-philip-king/getting-started-with-dbt-on-snowflake:environment:development'
   )
   DEFAULT_ROLE = ACCOUNTADMIN
   COMMENT = 'Service user for GitHub Actions';
@@ -55,7 +58,7 @@ CREATE USER IF NOT EXISTS github_actions_service_user
 GRANT ROLE ACCOUNTADMIN TO USER github_actions_service_user;
 
 -- Set a default warehouse:
-ALTER USER github_actions_service_user SET DEFAULT_WAREHOUSE = 'tasty_bytes_dbt_wh';
+ALTER USER github_actions_service_user SET DEFAULT_WAREHOUSE = 'dbt_projects_wh';
 
 -- Alternative: PAT-based authentication (less secure)
 -- If you prefer to use one Snowflake user across multiple repositories, or cannot use
@@ -86,7 +89,7 @@ ALTER USER github_actions_service_user SET DEFAULT_WAREHOUSE = 'tasty_bytes_dbt_
 -- ALTER USER github_actions_service_user SET AUTHENTICATION POLICY github_actions_access_management.POLICIES.github_auth_policy;
 
 -- Set a default warehouse:
--- ALTER USER github_actions_service_user SET DEFAULT_WAREHOUSE = 'tasty_bytes_dbt_wh';
+-- ALTER USER github_actions_service_user SET DEFAULT_WAREHOUSE = 'dbt_projects_wh';
 
 -- =============================================================================
 -- STEP 3: (Optional) Set up a network policy for GitHub Actions

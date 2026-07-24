@@ -34,6 +34,10 @@ jobs:
       - name: Check Snowflake CLI Version
         run: snow --version
 
+      - name: Test warehouse access
+        run: |
+          snow sql -q "USE WAREHOUSE DBT_PROJECTS_WH" -x
+
       - name: Show session context
         run: |
           snow sql -q "select current_user(), current_role(), current_warehouse();" -x

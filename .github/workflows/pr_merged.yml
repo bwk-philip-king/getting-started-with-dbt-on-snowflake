@@ -26,10 +26,6 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Show session context
-        run: |
-          snow sql -q "select current_user(), current_role(), current_warehouse();" -x
-
       - name: Install Snowflake CLI
         uses: snowflakedb/snowflake-cli-action@v2.0
         with: # Ensures Snowflake CLI will search for OIDC users matching this subject
@@ -37,6 +33,10 @@ jobs:
 
       - name: Check Snowflake CLI Version
         run: snow --version
+
+      - name: Show session context
+        run: |
+          snow sql -q "select current_user(), current_role(), current_warehouse();" -x
 
       - name: Debug Snowflake connection
         run: |

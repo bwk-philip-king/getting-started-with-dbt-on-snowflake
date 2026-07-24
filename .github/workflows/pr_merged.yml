@@ -37,6 +37,9 @@ jobs:
   
       # The -x is shorthand for --temporary-connection
       - run: snow connection test -x
+
+      - name: Show Snowflake dbt help
+        run: snow dbt --help
       
       - name: Show project files
         run: |

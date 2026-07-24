@@ -43,9 +43,6 @@ jobs:
       - name: Check Snowflake CLI Version
         run: snow --version
 
-      - name: Check connection details
-        run: snow sql -q "SELECT CURRENT_ROLE(), CURRENT_USER(), CURRENT_ACCOUNT();" -x
-
       # The -x is shorthand for --temporary-connection
       - name: Test the connection details
         run: snow connection test -x

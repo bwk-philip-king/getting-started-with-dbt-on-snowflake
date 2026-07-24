@@ -129,13 +129,13 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dbt_ext_access
 
 -- File format and external stage
 
--- CREATE OR REPLACE FILE FORMAT dbt_projects.public.csv_ff 
--- type = 'csv';
+CREATE OR REPLACE FILE FORMAT dbt_projects.public.csv_ff 
+type = 'csv';
 
--- CREATE OR REPLACE STAGE dbt_projects.public.s3load
--- COMMENT = 'Quickstarts S3 Stage Connection'
--- url = 's3://sfquickstarts/frostbyte_tastybytes/'
--- file_format = dbt_projects.public.csv_ff;
+CREATE OR REPLACE STAGE dbt_projects.public.s3load
+COMMENT = 'Quickstarts S3 Stage Connection'
+url = 's3://sfquickstarts/frostbyte_tastybytes/'
+file_format = dbt_projects.public.csv_ff;
 
 -- =============================================================================
 --  Raw zone table builds

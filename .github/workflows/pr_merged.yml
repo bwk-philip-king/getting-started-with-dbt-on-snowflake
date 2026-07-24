@@ -38,18 +38,6 @@ jobs:
       # The -x is shorthand for --temporary-connection
       - run: snow connection test -x
 
-      - name: Show Snowflake dbt help
-        run: snow dbt --help
-      
-      - name: Show project files
-        run: |
-          ls -la
-          ls -la ./tasty_bytes_dbt_demo
-          cat ./tasty_bytes_dbt_demo/packages.yml
-    
-      - name: Install dbt dependencies
-        run: snow dbt deps --project ./tasty_bytes_dbt_demo -x
-
       # The --force setting creates the object or updates it if it already exists
       # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
       # The --default-target flag ensures the dbt project object compiles and executes with your prod target

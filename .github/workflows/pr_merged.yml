@@ -35,10 +35,11 @@ jobs:
         run: snow --version
 
       - name: Debug Snowflake connection
-        run: snow connection test -x
-             snow sql -q "SELECT CURRENT_ACCOUNT(), CURRENT_USER(), CURRENT_ROLE();" -x
-             snow sql -q "SHOW WAREHOUSES LIKE 'DBT_PROJECTS_WH';" -x
-
+        run: |
+          snow connection test -x
+          snow sql -q "SELECT CURRENT_ACCOUNT(), CURRENT_USER(), CURRENT_ROLE();" -x
+          snow sql -q "SHOW WAREHOUSES LIKE 'DBT_PROJECTS_WH';" -x
+  
       # The -x is shorthand for --temporary-connection
       - run: snow connection test -x
 

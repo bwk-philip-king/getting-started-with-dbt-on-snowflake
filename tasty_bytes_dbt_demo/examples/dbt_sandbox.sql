@@ -3,3 +3,4 @@
 
 SHOW TABLES IN DATABASE dbt_projects;
 SHOW VIEWS IN DATABASE dbt_projects;
+SHOW DBT PROJECTS LIKE 'tasty%';

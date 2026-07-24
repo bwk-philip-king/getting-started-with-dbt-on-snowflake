@@ -28,14 +28,14 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Show Snowflake context
-        run: snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_ACCOUNT();" -x
-             snow sql -q "SHOW WAREHOUSES LIKE 'DBT_PROJECTS_WH';" -x
-
       - name: Install Snowflake CLI
         uses: snowflakedb/snowflake-cli-action@v2.0
         with: # Ensures Snowflake CLI will search for OIDC users matching this subject
           use-oidc: true
+
+      - name: Show Snowflake context
+        run: snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_ACCOUNT();" -x
+             snow sql -q "SHOW WAREHOUSES LIKE 'DBT_PROJECTS_WH';" -x
 
       - name: Debug workflow
         run: echo "Workflow reached debug step" ls -la find . -maxdepth 2 -type d

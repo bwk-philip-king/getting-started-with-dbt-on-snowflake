@@ -1,3 +1,6 @@
+-- replace all references to "tasty_bytes_dbt_db" with "dbt_projects"
+-- replace all references to "tasty_bytes_dbt_wh" with "dbt_projects_wh"
+
 -- To avoid issues with CREATE OR ALTER, suspend all of the tasks from root to child
 -- ALTER TASK IF EXISTS ensures this file can execute on first run each time a task is added
 ALTER TASK IF EXISTS run_tasty_bytes_subset SUSPEND;
@@ -5,14 +8,14 @@ ALTER TASK IF EXISTS run_tasty_bytes_full SUSPEND;
 
 -- Builds a subset of the models run tests. This is an example of a subset that needs to be available early for business needs
 CREATE OR ALTER TASK run_tasty_bytes_subset
-  WAREHOUSE = tasty_bytes_dbt_wh
+  WAREHOUSE = dbt_projects_wh
   SCHEDULE = '12 hours'
   AS
       execute dbt project tasty_bytes_dbt_object_gh_action args='build --select raw_customers stg_customers customers --target prod';
 
 -- Builds all models and runs tests in DAG order, failing early if any test fails
 CREATE OR ALTER TASK run_tasty_bytes_full
-  WAREHOUSE = tasty_bytes_dbt_wh
+  WAREHOUSE = dbt_projects_wh
   AFTER run_tasty_bytes_subset
   AS
       execute dbt project tasty_bytes_dbt_object_gh_action args='build --target prod';

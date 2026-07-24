@@ -35,11 +35,11 @@ jobs:
       - name: Check Snowflake CLI Version
         run: snow --version
 
-      # The -x is shorthand for --temporary-connection
-      - run: snow connection test -x
-
       - name: Check connection details
         run: snow sql -q "SELECT CURRENT_ROLE(), CURRENT_USER(), CURRENT_ACCOUNT();" -x
+
+      # The -x is shorthand for --temporary-connection
+      - run: snow connection test -x
 
       # The --force setting creates the object or updates it if it already exists
       # You can remove the "--source" flag if your dbt_project.yml is at root of your repo

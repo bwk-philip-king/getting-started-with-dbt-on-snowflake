@@ -34,24 +34,16 @@ jobs:
 
       - name: Check Snowflake CLI Version
         run: snow --version
-
-      - name: Test warehouse access
-        run: |
-          snow sql -q "USE WAREHOUSE DBT_PROJECTS_WH" -x
-
-      - name: Show session context
-        run: |
-          snow sql -q "select current_user(), current_role(), current_warehouse();" -x
-
-      - name: Debug Snowflake connection
-        run: |
-          snow connection test -x
-          snow sql -q "SELECT CURRENT_ACCOUNT(), CURRENT_USER(), CURRENT_ROLE();" -x
-          snow sql -q "SHOW WAREHOUSES LIKE 'DBT_PROJECTS_WH';" -x
   
       # The -x is shorthand for --temporary-connection
       - run: snow connection test -x
       
+      - name: Show project files
+        run: |
+          ls -la
+          ls -la ./tasty_bytes_dbt_demo
+          cat ./tasty_bytes_dbt_demo/packages.yml
+    
       - name: Install dbt dependencies
         run: snow dbt deps --project ./tasty_bytes_dbt_demo -x
 

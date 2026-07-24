@@ -32,6 +32,9 @@ jobs:
         with: # Ensures Snowflake CLI will search for OIDC users matching this subject
           use-oidc: true
 
+      - name: Debug workflow
+        run: echo "Workflow reached debug step" ls -la find . -maxdepth 2 -type d
+
       - name: Check Snowflake CLI Version
         run: snow --version
 

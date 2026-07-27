@@ -12,13 +12,14 @@ jobs:
   run-snowflake-dbt-job:
     name: "Run on Accepted PR"
     runs-on: ubuntu-latest
-    environment: prod # Must match the OIDC subject's environment 
+    environment: dev # Must match the OIDC subject's environment
     env:
       SNOWFLAKE_CLI_FEATURES_ENABLE_DBT: true
       SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       # SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PAT }} # Snowflake password is required if you aren't using OIDC
       SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
       SNOWFLAKE_SCHEMA: ${{ vars.SNOWFLAKE_SCHEMA }}
+      SNOWFLAKE_WAREHOUSE: ${{ vars.SNOWFLAKE_WAREHOUSE }}
 
     steps:
       # Check out repository code
@@ -33,7 +34,7 @@ jobs:
 
       - name: Check Snowflake CLI Version
         run: snow --version
-
+  
       # The -x is shorthand for --temporary-connection
       - run: snow connection test -x
 
@@ -41,7 +42,7 @@ jobs:
       # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
       # The --default-target flag ensures the dbt project object compiles and executes with your prod target
       - name: Create a new dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
-        run: snow dbt deploy tasty_bytes_dbt_object_gh_action --source ./tasty_bytes --default-target prod --dbt-version 1.10.15 --force -x
+        run: snow dbt deploy tasty_bytes_dbt_object_gh_action --source ./tasty_bytes_dbt_demo --default-target prod --dbt-version 1.10.15 --force -x
 
       - name: List all of the snowflake dbt project objects on your account
         run: snow dbt list -x

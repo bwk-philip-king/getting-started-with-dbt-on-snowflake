@@ -1,7 +1,6 @@
 name: Incoming PR
 run-name: PR opened by ${{ github.actor }}
 on:
-  workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     branches: [main]
@@ -14,13 +13,14 @@ jobs:
   run-snowflake-test-dbt-job:
     name: "Run on Incoming PR"
     runs-on: ubuntu-latest
-    environment: prod # Must match the OIDC subject's environment
+    environment: dev # Must match the OIDC subject's environment
     env:
       SNOWFLAKE_CLI_FEATURES_ENABLE_DBT: true
       SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       # SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PAT }} # Snowflake password is required if you aren't using OIDC
       SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
       SNOWFLAKE_SCHEMA: ${{ vars.SNOWFLAKE_SCHEMA }}
+      SNOWFLAKE_WAREHOUSE: ${{ vars.SNOWFLAKE_WAREHOUSE }}
 
     steps:
       # Check out repository code
@@ -28,23 +28,20 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Show Snowflake context
-        run: snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_ACCOUNT();" -x
-             snow sql -q "SHOW WAREHOUSES LIKE 'DBT_PROJECTS_WH';" -x
-
       - name: Install Snowflake CLI
         uses: snowflakedb/snowflake-cli-action@v2.0
         with: # Ensures Snowflake CLI will search for OIDC users matching this subject
           use-oidc: true
+
+      - name: Show Snowflake context
+        run: snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_ACCOUNT();" -x
+             snow sql -q "SHOW WAREHOUSES LIKE 'DBT_PROJECTS_WH';" -x
 
       - name: Debug workflow
         run: echo "Workflow reached debug step" ls -la find . -maxdepth 2 -type d
 
       - name: Check Snowflake CLI Version
         run: snow --version
-
-      - name: Check connection details
-        run: snow sql -q "SELECT CURRENT_ROLE(), CURRENT_USER(), CURRENT_ACCOUNT();" -x
 
       # The -x is shorthand for --temporary-connection
       - name: Test the connection details
